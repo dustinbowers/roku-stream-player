@@ -10,8 +10,9 @@
             "rendezvousTracking": false,
             "rootDir": "${workspaceFolder}/dist/build",
             "preLaunchTask": "build",
-            "name": "Launch arturo-day-1 (dev)",
-            "injectRdbOnDeviceComponent": true
+            "name": "Launch Roku 101 (dev)",
+            "injectRdbOnDeviceComponent": true,
+            "enableDebugProtocol": false
         },
         {
             "type": "brightscript",
@@ -22,7 +23,7 @@
             "rendezvousTracking": false,
             "rootDir": "${workspaceFolder}/dist/build",
             "preLaunchTask": "build-prod",
-            "name": "Launch arturo-day-1 (prod)"
+            "name": "Launch Roku 101 (prod)"
         }
     ]
 }
