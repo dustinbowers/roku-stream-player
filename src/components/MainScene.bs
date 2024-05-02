@@ -1,0 +1,64 @@
+sub init()
+    m.label_prefix = `Counter: `
+    m.count = 0
+    m.label = m.top.findNode("welcome")
+    m.label.text = m.label_prefix + m.count.toStr()
+    m.label.font.size=72
+
+    increaseBtn = m.top.findNode("increaseBtn")
+    decreaseBtn = m.top.findNode("decreaseBtn")
+
+    increaseBtn.setFocus(true)
+    increaseBtn.observeField("buttonSelected", "increaseCounter")
+    decreaseBtn.observeField("buttonSelected", "decreaseCounter")
+
+    ' This is required to pass certification.
+    ' Specified in section 3.2 of the Roku Certification Criteria.
+    ' Reference: https://developer.roku.com/docs/developer-program/certification/certification.md#3-performance
+    m.top.signalBeacon("AppLaunchComplete")
+    print("AppLaunchComplete")
+end sub
+
+function onKeyEvent(key as string, press as boolean) as boolean
+    ? key; press
+    ' First of all, key presses send two events: One when the key is pressed,
+    ' and another when it's released. We only want to respond to the press.
+    if (not press)
+        return false
+    end if
+
+    increaseBtn = m.top.findNode("increaseBtn")
+    decreaseBtn = m.top.findNode("decreaseBtn")
+
+    ' The `hasFocus()` method is implemented by the `roSGNode` component,
+    ' which is the final ancestor of all SceneGraph nodes.
+    if (key = "up" and decreaseBtn.hasFocus())
+        increaseBtn.setFocus(true)
+        return true
+    end if
+
+    if (key = "down" and increaseBtn.hasFocus())
+        decreaseBtn.setFocus(true)
+        return true
+    end if
+
+    return false
+    return true
+
+end function
+
+sub increaseCounter()
+    m.count = m.count + 1
+    m.label.text = getLabelText()
+end sub
+
+sub decreaseCounter()
+    m.count -= 1
+    m.label.text = getLabelText()
+end sub
+
+function getLabelText() as String
+    s =  `${m.label_prefix} ${m.count}`
+    ? "getLabelText() => " + s
+    return s 
+end function

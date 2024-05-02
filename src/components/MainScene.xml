@@ -1,0 +1,16 @@
+<component name="MainScene" extends="Scene">
+    <script type="text/brightscript" uri="MainScene.bs" />
+    <children>
+        <Label id="welcome" translation="[496, 54]" font="font:LargeBoldSystemFont" />
+
+        <Button
+        id="increaseBtn"
+        translation="[96, 100]"
+        text="Increase!"/>
+        <Button
+        id="decreaseBtn"
+        translation="[96, 200]"
+        text="Decrease!"
+        />
+    </children>
+</component>
