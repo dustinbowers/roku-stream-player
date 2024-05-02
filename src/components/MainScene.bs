@@ -1,64 +1,107 @@
 sub init()
-    m.label_prefix = `Counter: `
-    m.count = 0
-    m.label = m.top.findNode("welcome")
-    m.label.text = m.label_prefix + m.count.toStr()
-    m.label.font.size=72
+    m.screenTitle = m.top.findNode("title")
+    m.screenTitle.text = "Click [Load Another]..."
+    m.loadAnotherButton = m.top.findNode("loadAnotherButton")
+    m.playNowButton = m.top.findNode("playNowButton")
 
-    increaseBtn = m.top.findNode("increaseBtn")
-    decreaseBtn = m.top.findNode("decreaseBtn")
+    m.loadAnotherButton.observeField("buttonSelected", "loadAnother")
+    m.playNowButton.observeField("buttonSelected", "playNow")
 
-    increaseBtn.setFocus(true)
-    increaseBtn.observeField("buttonSelected", "increaseCounter")
-    decreaseBtn.observeField("buttonSelected", "decreaseCounter")
+    m.loadAnotherButton.setFocus(true)
+
+    m.player = m.top.findNode("videoPlayer")
+	m.player.observeField("state", "onPlayerStateChange")
+
+    m.spinner = m.top.findNode("spinner")
+    ' `loadWidth` and `loadHeight` must be set before `uri` is set
+    ' to ensure that the image scales properly.
+    m.spinner.poster.setFields({
+        loadWidth: 40,
+        loadHeight: 40,
+        width: 40,
+        height: 40
+    })
+    ' m.spinner.uri = "pkg:/images/spinner-solid.png"
+    m.spinner.uri = "pkg:/images/spinner2.png"
+    m.spinner.control = "start"
+
+    m.task = CreateObject("roSGNode", "GetStreamsTask")
+
+    loadAnother()
 
     ' This is required to pass certification.
     ' Specified in section 3.2 of the Roku Certification Criteria.
     ' Reference: https://developer.roku.com/docs/developer-program/certification/certification.md#3-performance
     m.top.signalBeacon("AppLaunchComplete")
     print("AppLaunchComplete")
+
+end sub
+
+sub playNow()
+    ? "play now"
+
+    if (m.nextContent <> invalid)
+        m.player.content = m.nextContent
+        m.player.control = "play"
+        m.screenTitle.text = "Now Playing: " + m.nextContent.title
+    end if
+end sub
+
+sub loadAnother()
+    m.task.observeField("result", "onGetStreamsTaskResult")
+    m.task.control = "run"
+end sub
+
+sub onGetStreamsTaskResult(event as object)
+    ' Remember that event.getData() returns
+    ' the value of the observed field (in this case, "result")
+    content = event.getData()
+
+    ' Do nothing if the result is still empty
+    if (content = invalid)
+        return
+    end if
+
+    ' It is always a good idea to cleanup observers since they
+    ' take up memory and can cause memory leaks.
+    m.task.unobserveField("result")
+
+    ' m.player.content = content
+    ' m.player.control = "play"
+
+    m.nextContent = content
+    m.screenTitle.text = "In queue: " + m.nextContent.title
+end sub
+
+sub onPlayerStateChange(event as object)
+    videoState = event.getData()
+    ? "onPlayerStateChange() - " event
+    ? `   - videoState = ${videoState}`
+    m.spinner.visible = (videoState = "buffering")
+    
+    if (m.player.state = "error")
+        m.screenTitle.text += " (Error loading stream. Please load another)"
+    end if
 end sub
 
 function onKeyEvent(key as string, press as boolean) as boolean
-    ? key; press
     ' First of all, key presses send two events: One when the key is pressed,
     ' and another when it's released. We only want to respond to the press.
     if (not press)
         return false
     end if
 
-    increaseBtn = m.top.findNode("increaseBtn")
-    decreaseBtn = m.top.findNode("decreaseBtn")
-
     ' The `hasFocus()` method is implemented by the `roSGNode` component,
     ' which is the final ancestor of all SceneGraph nodes.
-    if (key = "up" and decreaseBtn.hasFocus())
-        increaseBtn.setFocus(true)
+    if (key = "right" and m.loadAnotherButton.hasFocus())
+        m.playNowButton.setFocus(true)
         return true
     end if
 
-    if (key = "down" and increaseBtn.hasFocus())
-        decreaseBtn.setFocus(true)
+    if (key = "left" and m.playNowButton.hasFocus())
+        m.loadAnotherButton.setFocus(true)
         return true
     end if
 
     return false
-    return true
-
-end function
-
-sub increaseCounter()
-    m.count = m.count + 1
-    m.label.text = getLabelText()
-end sub
-
-sub decreaseCounter()
-    m.count -= 1
-    m.label.text = getLabelText()
-end sub
-
-function getLabelText() as String
-    s =  `${m.label_prefix} ${m.count}`
-    ? "getLabelText() => " + s
-    return s 
 end function

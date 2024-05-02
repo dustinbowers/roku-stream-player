@@ -1,16 +1,42 @@
 <component name="MainScene" extends="Scene">
     <script type="text/brightscript" uri="MainScene.bs" />
     <children>
-        <Label id="welcome" translation="[496, 54]" font="font:LargeBoldSystemFont" />
+        <Label id="title" translation="[96, 54]" />
 
         <Button
-        id="increaseBtn"
-        translation="[96, 100]"
-        text="Increase!"/>
-        <Button
-        id="decreaseBtn"
-        translation="[96, 200]"
-        text="Decrease!"
+            id="loadAnotherButton"
+            translation="[96, 100]"
+            text="Load another"
+            maxWidth="350"
+            minWidth="0"
+            iconUri=""
+            focusedIconUri=""
         />
+
+        <Button
+            id="playNowButton"
+            translation="[400, 100]"
+            text="Play Now"
+            maxWidth="300"
+            minWidth="0"
+            iconUri=""
+            focusedIconUri=""
+        />
+
+        <Video
+            id="videoPlayer"
+            translation="[96, 219]"
+            width="1360"
+            height="765"
+            enableUi="false"
+        />
+
+        <!-- make the spinner not visible by default -->
+        <BusySpinner
+            id="spinner"
+            translation="[756, 581]"
+            visible="false"
+        />
+
     </children>
 </component>

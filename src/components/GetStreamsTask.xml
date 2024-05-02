@@ -1,0 +1,8 @@
+<component name="GetStreamsTask" extends="Task">
+	<!-- importing the .bs file is not necessary because
+	we've set "autoImportComponentScript": true in
+	config/bsconfig.base.json -->
+    <interface>
+        <field id="result" type="node" />
+    </interface>
+</component>
