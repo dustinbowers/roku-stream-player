@@ -10,7 +10,19 @@ sub init()
     m.loadAnotherButton.setFocus(true)
 
     m.player = m.top.findNode("videoPlayer")
-	m.player.observeField("state", "onPlayerStateChange")
+    m.player.observeField("state", "onPlayerStateChange")
+    
+    di = CreateObject("roDeviceInfo")
+    displaySize = di.GetDisplaySize()
+    ' displaySize = di.GetUIResolution()
+    'displaySize = m.top.boundingRect()
+    ? displaySize
+
+    ' This is very dirty right now because .GetDisplaySize() is returning seemingly incorrect values
+    adjustedWidth = (1920-(16/9 * 219))
+    m.player.translation = [(16/9 * 219) / 2, 219]
+    m.player.width = 1920 - (16/9 * 219)'displaySize.width * 1.4
+    m.player.height = 1080 - 219
 
     m.spinner = m.top.findNode("spinner")
     ' `loadWidth` and `loadHeight` must be set before `uri` is set
